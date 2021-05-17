@@ -6,13 +6,45 @@ from warnings import catch_warnings
 #whatever reason (moved, removed, name changed, etc).
 back_up = ['Failed', 'Malfunction', 'blunder']
 
+#This global variable holds all chars that have been guessed, and the one char
+#that was initailly made visible.
+guessed_chars = []
+
 def clear():
-    '''Clears the Terminal.'''
+    '''Clears the Terminal of all text.'''
 
     if name == 'nt': #Windows
         _ = system('cls')
     else: #Mac/Linux
         _ = system('clear')
+
+
+def valid_guess(guess):
+    '''Checks if the guess made is a aplhabet character.
+    Parameters:
+        guess (char): the character to be validated.
+    Returns:
+        Boolean: True if the guess is a valid chars
+                 False if the guess is an invalid chars.'''
+    try:
+        if ((ord(guess) > 64 and ord(guess) < 91) or 
+        (ord(guess) > 96 and ord(guess) < 123)):
+            return True
+        else:
+            return False
+    except TypeError:
+        return False
+
+
+def add_guessed(word):
+    ''' Adds all alphabet chars in the given word to the guessed_char list.
+    Parameters:
+        word (str): The given word to check for alphabet chars.'''
+    global guessed_chars
+    
+    for sub_char in word:
+        if not any(sub_char in char for char in guessed_chars):
+            guessed_chars.append(sub_char)
 
 
 def select_difficulty():
@@ -89,4 +121,7 @@ if __name__ == "__main__":
     chosen_word = choose_word(words_list)
     hidden_word = hide_chars(chosen_word)
 
-    print(hidden_word)
+#     while hidden_word != choose_word:
+#         guess = input(f"The word is: {chosen_word}.\n\
+# Guess the missing letter: ")
+#         while not valid_guess(guess):
