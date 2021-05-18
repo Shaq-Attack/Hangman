@@ -51,12 +51,19 @@ class Test_Hangman(unittest.TestCase):
                 count += 1
         self.assertEqual(3, count)
 
-    
-    def test_step5_valid_guess_invalid(self):
-        output1 = hangman.valid_guess('0')
-        output2 = hangman.valid_guess(1)
-        output3 = hangman.valid_guess('$')
-        output4 = hangman.valid_guess('abc')
+
+    @patch('sys.stdin', StringIO("abc\n"))
+    def test_step5_get_guess(self):
+        with patch(('sys.stdout'), new = StringIO()):  
+            output = hangman.get_guess("xyz")
+            self.assertEqual("abc", output)
+
+
+    def test_step6_validate_guess_invalid(self):
+        output1 = hangman.validate_guess('0')
+        output2 = hangman.validate_guess(1)
+        output3 = hangman.validate_guess('$')
+        output4 = hangman.validate_guess('abc')
         
         self.assertFalse(output1)
         self.assertFalse(output2)
@@ -64,11 +71,11 @@ class Test_Hangman(unittest.TestCase):
         self.assertFalse(output4)
 
     
-    def test_step5_valid_guess_valid(self):
-        output1 = hangman.valid_guess('A')
-        output2 = hangman.valid_guess('a')
-        output3 = hangman.valid_guess('Z')
-        output4 = hangman.valid_guess('z')
+    def test_step6_validate_guess_valid(self):
+        output1 = hangman.validate_guess('A')
+        output2 = hangman.validate_guess('a')
+        output3 = hangman.validate_guess('Z')
+        output4 = hangman.validate_guess('z')
 
         self.assertTrue(output1)
         self.assertTrue(output2)
@@ -76,6 +83,29 @@ class Test_Hangman(unittest.TestCase):
         self.assertTrue(output4)
 
 
-    def test_step6_guessed_chars_list(self):
-        hangman.add_guessed('abcd')
+    def test_step7_guessed_chars_list(self):
+        hangman.add_guessed('a')
+        hangman.add_guessed('b')
+        hangman.add_guessed('c')
+        hangman.add_guessed('d')
+
         self.assertEqual(['a', 'b', 'c', 'd'], hangman.guessed_chars)
+
+
+    def test_step8_fill_char(self):
+        self.assertEqual('ab_', hangman.fill_in_char('abc', 'a__', 'b'))
+        self.assertEqual('a__', hangman.fill_in_char('abc', 'a__', 'a'))
+        self.assertEqual('a__', hangman.fill_in_char('abc', 'a__', 'd'))
+
+    
+    def test_step9_draw_hangman(self):
+            self.assertEqual('\n/----\n|\n|\n|\n|\n_______', 
+                            hangman.draw_figure(4))
+            self.assertEqual('\n/----\n|   0\n|\n|\n|\n_______', 
+                            hangman.draw_figure(3))
+            self.assertEqual('\n/----\n|   0\n|   |\n|   |\n|\n_______', 
+                            hangman.draw_figure(2))
+            self.assertEqual('\n/----\n|   0\n|  /|\\\n|   |\n|\n_______', 
+                            hangman.draw_figure(1))
+            self.assertEqual('\n/----\n|   0\n|  /|\\\n|   |\n|  / \\\n_______', 
+                            hangman.draw_figure(0))
